@@ -2,72 +2,30 @@ package config
 
 import (
 	"fmt"
-	"os"
 
+	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	DBHost     string
-	DBPort     string
-	DBUser     string
-	DBPassword string
-	DBName     string
-	ServerPort string
-	JWTSecret  string
+	DBHost     string `env:"DB_HOST,required"`
+	DBPort     string `env:"DB_PORT" envDefault:"5432"`
+	DBUser     string `env:"DB_USER,required"`
+	DBPassword string `env:"DB_PASSWORD,required"`
+	DBName     string `env:"DB_NAME,required"`
+	ServerPort string `env:"SERVER_PORT" envDefault:"8080"`
+	// JWTSecret  string `env:"JWT_SECRET,required"`
 }
 
 func LoadConfig() (*Config, error) {
 
-	if err := godotenv.Load(); err != nil {
-		return nil, fmt.Errorf("failed to load .env file: %w", err)
-	}
+	_ = godotenv.Load()
 
-	cfg := &Config{
-		DBHost:     os.Getenv("DB_HOST"),
-		DBPort:     os.Getenv("DB_PORT"),
-		DBUser:     os.Getenv("DB_USER"),
-		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBName:     os.Getenv("DB_NAME"),
-		ServerPort: os.Getenv("SERVER_PORT"),
-		JWTSecret:  os.Getenv("JWT_SECRET"),
-	}
+	cfg := &Config{}
 
-	if err := cfg.Validate(); err != nil {
-		return nil, err
+	if err := env.Parse(cfg); err != nil {
+		return nil, fmt.Errorf("failed to load configuration: %w", err)
 	}
 
 	return cfg, nil
-}
-
-func (c *Config) Validate() error {
-	var missing []string
-
-	if c.DBHost == "" {
-		missing = append(missing, "DB_HOST")
-	}
-	if c.DBPort == "" {
-		missing = append(missing, "DB_PORT")
-	}
-	if c.DBUser == "" {
-		missing = append(missing, "DB_USER")
-	}
-	if c.DBPassword == "" {
-		missing = append(missing, "DB_PASSWORD")
-	}
-	if c.DBName == "" {
-		missing = append(missing, "DB_NAME")
-	}
-	if c.ServerPort == "" {
-		missing = append(missing, "SERVER_PORT")
-	}
-	if c.JWTSecret == "" {
-		missing = append(missing, "JWT_SECRET")
-	}
-
-	if len(missing) > 0 {
-		return fmt.Errorf("missing required environment variables: %v", missing)
-	}
-
-	return nil
 }
