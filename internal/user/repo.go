@@ -13,3 +13,14 @@ func (s *Scope) FetchUserByEmail(ctx context.Context, email string) (*User, erro
 
 	return &user, nil
 }
+
+
+func (s *Scope) InsertUser(ctx context.Context, user *User) error {
+
+	_, err:= s.db.NewInsert().Model(&user).Exec(ctx)
+	if err != nil{
+		return err
+	}
+	
+	return nil
+}

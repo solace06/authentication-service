@@ -1,16 +1,20 @@
 package user
 
-import "github.com/uptrace/bun"
+import (
+	"time"
+
+	"github.com/uptrace/bun"
+)
 
 type User struct {
 	bun.BaseModel `bun:"table:users"`
 
-	ID           int64  `json:"id"`
-	Name         string `json:"name"`
-	Email        string `json:"email"`
-	PasswordHash string `json:"-"`
-	CreatedAt    string `json:"created_at"`
-	UpdatedAt    string `json:"updated_at"`
+	ID           int64     `json:"id"`
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	PasswordHash string    `json:"-"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
 type CreateUserRequest struct {
