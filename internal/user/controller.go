@@ -15,27 +15,31 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 	//validate request
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		er := pkg.BadRequest(err.Error())
+		c.JSON(400, er)
 		return
 	}
 
 	//check if the email is valid
 	ok := pkg.IsValidEmail(req.Email)
 	if !ok {
-		c.JSON(400, gin.H{"error": "invalid email format"})
+		er := pkg.BadRequest("invalid email format")
+		c.JSON(400, er)
 		return
 	}
 
 	//check if the password is valid
 	err = pkg.IsValidPassword(req.Password)
 	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		er := pkg.BadRequest(err.Error())
+		c.JSON(400, er)
 		return
 	}
 
 	err = s.CreateUser(c.Request.Context(), req)
 	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
+		er := pkg.InternalServerError(err.Error())
+		c.JSON(500, er)
 		return
 	}
 
