@@ -43,6 +43,11 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(201, gin.H{"message": "user created successfully"})
+	response := Response{
+		Data:    nil,
+		Message: "user created successfully",
+	}
+	
+	c.JSON(201,response)
 
 }

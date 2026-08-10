@@ -22,3 +22,8 @@ type CreateUserRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
 }
+
+type Response struct {
+	Data    any    `json:"data"`
+	Message string `json:"message"`
+}
