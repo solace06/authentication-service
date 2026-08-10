@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/solace06/auth-service/config"
@@ -30,6 +31,8 @@ func NewDB(cfg *config.Config) (*bun.DB, error) {
 	}
 
 	db := bun.NewDB(sqlDB, pgdialect.New())
+
+	log.Println("Connected to database")
 
 	return db, nil
 }
