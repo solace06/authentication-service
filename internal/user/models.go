@@ -1,6 +1,10 @@
 package user
 
+import "github.com/uptrace/bun"
+
 type User struct {
+	bun.BaseModel `bun:"table:users"`
+
 	ID           int64  `json:"id"`
 	Name         string `json:"name"`
 	Email        string `json:"email"`
