@@ -2,9 +2,12 @@ package main
 
 import (
 	"log"
+	"net/http"
 
+	"github.com/solace06/auth-service/api"
 	"github.com/solace06/auth-service/config"
 	"github.com/solace06/auth-service/database"
+	"github.com/solace06/auth-service/internal/user"
 )
 
 func main() {
@@ -13,10 +16,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, err = database.NewDB(cfg)
+	db, err := database.NewDB(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("Connected to database")
+	err = user.NewScope(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	router := api.NewRouter()
+
+	http.ListenAndServe(":8080", router)
 }
