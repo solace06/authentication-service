@@ -33,6 +33,7 @@ func (s *Scope) CreateUser(ctx context.Context, req CreateUserRequest) error {
 	user = &User{
 		Name:         req.Name,
 		Email:        req.Email,
+		Role:         req.Role,
 		PasswordHash: passwordHash,
 		CreatedAt:    currTime,
 		UpdatedAt:    currTime,
