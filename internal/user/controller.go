@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/solace06/auth-service/pkg"
+	"github.com/solace06/auth-service/problem"
 )
 
 func UserRoutes(r *gin.RouterGroup) {
@@ -15,7 +16,7 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 	//validate request
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
-		er := pkg.BadRequest(err.Error())
+		er := problem.BadRequest(err.Error())
 		c.JSON(400, er)
 		return
 	}
@@ -23,7 +24,7 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 	//check if the email is valid
 	ok := pkg.IsValidEmail(req.Email)
 	if !ok {
-		er := pkg.BadRequest("invalid email format")
+		er := problem.BadRequest("invalid email format")
 		c.JSON(400, er)
 		return
 	}
@@ -31,14 +32,14 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 	//check if the password is valid
 	err = pkg.IsValidPassword(req.Password)
 	if err != nil {
-		er := pkg.BadRequest(err.Error())
+		er := problem.BadRequest(err.Error())
 		c.JSON(400, er)
 		return
 	}
 
 	err = s.CreateUser(c.Request.Context(), req)
 	if err != nil {
-		er := pkg.InternalServerError(err.Error())
+		er := problem.InternalServerError(err.Error())
 		c.JSON(500, er)
 		return
 	}
@@ -47,7 +48,7 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 		Data:    nil,
 		Message: "user created successfully",
 	}
-	
-	c.JSON(201,response)
+
+	c.JSON(201, response)
 
 }
