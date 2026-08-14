@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/solace06/auth-service/auth"
 	"github.com/solace06/auth-service/pkg"
 )
 
@@ -63,7 +62,7 @@ func (s *Scope) AuthenticateUser(ctx context.Context, req UserLoginRequest) (str
 		return "", fmt.Errorf("incorrect password")
 	}
 
-	token, err := auth.GenerateJWT(user.ID,user.Role)
+	token, err := pkg.GenerateJWT(user.ID,user.Role)
 	if err != nil {
 		return "", err
 	}
