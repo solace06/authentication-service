@@ -5,18 +5,16 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-
-	"github.com/solace06/auth-service/internal/user"
 )
 
-func GenerateJWT(user user.User) (string, error) {
+func GenerateJWT(id int64, role string) (string, error) {
 
 	secret := os.Getenv("JWT_SECRET")
 
 	//claims
 	claims := jwt.MapClaims{
-		"sub":  user.ID,
-		"role": user.Role,
+		"sub":  id,
+		"role": role,
 		"iat":  time.Now().Unix(),
 		"exp":  time.Now().Add(time.Hour * 24).Unix(),
 	}

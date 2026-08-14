@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/solace06/auth-service/auth"
 	"github.com/solace06/auth-service/pkg"
 )
 
@@ -45,4 +46,27 @@ func (s *Scope) CreateUser(ctx context.Context, req CreateUserRequest) error {
 	}
 
 	return nil
+}
+
+func (s *Scope) AuthenticateUser(ctx context.Context, req UserLoginRequest) (string, error) {
+	user, err := s.FetchUserByEmail(ctx, req.Email)
+	if err != nil {
+		return "", err
+	}
+
+	if user == nil {
+		return "", fmt.Errorf("user not found")
+	}
+
+	ok := pkg.VerifyPassword(user.PasswordHash, req.Password)
+	if !ok {
+		return "", fmt.Errorf("incorrect password")
+	}
+
+	token, err := auth.GenerateJWT(user.ID,user.Role)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
