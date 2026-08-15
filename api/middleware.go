@@ -3,38 +3,38 @@ package api
 import "time"
 
 type Limiter struct {
-	Capacity float64
-	Rate     float64
-	Tokens   float64
-	Last     time.Time
+	capacity float64
+	rate     float64
+	tokens   float64
+	last     time.Time
 }
 
 
 func NewLimiter(capacity int, rate float64) *Limiter {
 	return &Limiter{
-		Capacity: float64(capacity),
-		Rate: rate,
-		Tokens: float64(capacity),
-		Last: time.Now(),
+		capacity: float64(capacity),
+		rate: rate,
+		tokens: float64(capacity),
+		last: time.Now(),
 	}
 }
 
 func (l *Limiter) Allow() bool {
 	//calc time elapsed
 	now:=time.Now()
-	elapsed:=now.Sub(l.Last).Seconds()
+	elapsed:=now.Sub(l.last).Seconds()
 
 	//update limiter
-	l.Tokens = min(l.Tokens+(l.Rate*elapsed),l.Capacity)
-	l.Last=now
+	l.tokens = min(l.tokens+(l.rate*elapsed),l.capacity)
+	l.last=now
 
 	//request rejected
-	if l.Tokens < 1 {
+	if l.tokens < 1 {
 		return false
 	}
 
 	//request accepted
-	l.Tokens--
+	l.tokens--
 
 	return true
 }
