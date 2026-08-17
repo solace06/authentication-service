@@ -8,9 +8,12 @@ import (
 	"github.com/solace06/auth-service/problem"
 )
 
-func UserRoutes(r *gin.RouterGroup) {
-	r.POST("/signup", s.RegisterUser)
-	r.POST("/login", s.UserLogin)
+func UserRoutes(router *gin.RouterGroup) {
+
+	r:=router.Group("/users")
+
+	r.POST("", s.RegisterUser)
+	router.POST("/login", s.UserLogin)
 }
 
 func (s *Scope) RegisterUser(c *gin.Context) {
