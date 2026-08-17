@@ -20,7 +20,7 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		er := problem.BadRequest(err.Error())
-		c.JSON(400, er)
+		c.JSON(http.StatusBadRequest, er)
 		return
 	}
 
@@ -28,7 +28,7 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 	ok := pkg.IsValidEmail(req.Email)
 	if !ok {
 		er := problem.BadRequest("invalid email format")
-		c.JSON(400, er)
+		c.JSON(http.StatusBadRequest, er)
 		return
 	}
 
@@ -36,14 +36,19 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 	err = pkg.IsValidPassword(req.Password)
 	if err != nil {
 		er := problem.BadRequest(err.Error())
-		c.JSON(400, er)
+		c.JSON(http.StatusBadRequest, er)
 		return
 	}
 
 	err = s.CreateUser(c.Request.Context(), req)
 	if err != nil {
+		if err.Error() == "user already exists" {
+			er := problem.Conflict(err.Error())
+			c.JSON(http.StatusConflict, er)
+			return
+		}
 		er := problem.InternalServerError(err.Error())
-		c.JSON(500, er)
+		c.JSON(http.StatusInternalServerError, er)
 		return
 	}
 
@@ -52,7 +57,7 @@ func (s *Scope) RegisterUser(c *gin.Context) {
 		Message: "user created successfully",
 	}
 
-	c.JSON(201, response)
+	c.JSON(http.StatusCreated, response)
 
 }
 
@@ -74,29 +79,34 @@ func (s *Scope) UserLogin(c *gin.Context) {
 
 	ok := pkg.IsValidEmail(req.Email)
 	if !ok {
-		er:=problem.BadRequest("invalid email format")
+		er := problem.BadRequest("invalid email format")
 		c.JSON(http.StatusBadRequest, er)
 		return
 	}
 
 	err = pkg.IsValidPassword(req.Password)
 	if err != nil {
-		er:=problem.BadRequest(err.Error())
+		er := problem.BadRequest(err.Error())
 		c.JSON(http.StatusBadRequest, er)
 		return
 	}
 
-	token, err:=s.AuthenticateUser(c.Request.Context(),req)
+	token, err := s.AuthenticateUser(c.Request.Context(), req)
 	if err != nil {
-		er:=problem.InternalServerError(err.Error())
-		c.JSON(http.StatusInternalServerError,er)
+		if err.Error() == "user not found" || err.Error() == "incorrect password" {
+			er := problem.Unauthorized(err.Error())
+			c.JSON(http.StatusUnauthorized, er)
+			return
+		}
+		er := problem.InternalServerError(err.Error())
+		c.JSON(http.StatusInternalServerError, er)
 		return
 	}
 
-	resp:=&Response{
-		Data: token,
-		Message: "Login Successful",
+	resp := &Response{
+		Data:    token,
+		Message: "login successful",
 	}
 
-	c.JSON(200, resp)
+	c.JSON(http.StatusOK, resp)
 }
