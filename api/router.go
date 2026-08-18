@@ -9,10 +9,14 @@ func NewRouter() *gin.Engine {
 
 	r := gin.Default()
 
-	v1 := r.Group("/api/v1")
+	r1 := r.Group("/api/v1/users")
+	r2 := r.Group("/api/v1")
 
-	v1.Use(Auth())
-	user.UserRoutes(v1)
+	r1.Use(RateLimit())
+	user.UserRoutes(r1)
+
+	r2.Use(LoginRateLimit())
+	user.AuthRoutes(r2)
 
 	return r
 }
