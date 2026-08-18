@@ -14,7 +14,6 @@ type Config struct {
 	DBPassword string `env:"DB_PASSWORD,required"`
 	DBName     string `env:"DB_NAME,required"`
 	ServerPort string `env:"SERVER_PORT" envDefault:"8080"`
-	// JWTSecret  string `env:"JWT_SECRET,required"`
 }
 
 func LoadConfig() (*Config, error) {

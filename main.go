@@ -28,5 +28,5 @@ func main() {
 
 	router := api.NewRouter()
 
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(cfg.ServerPort, router)
 }
