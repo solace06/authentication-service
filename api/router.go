@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/solace06/auth-service/internal/user"
+	"github.com/solace06/auth-service/user"
 )
 
 func NewRouter() *gin.Engine {

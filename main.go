@@ -7,7 +7,7 @@ import (
 	"github.com/solace06/auth-service/api"
 	"github.com/solace06/auth-service/config"
 	"github.com/solace06/auth-service/database"
-	"github.com/solace06/auth-service/internal/user"
+	"github.com/solace06/auth-service/user"
 )
 
 func main() {
